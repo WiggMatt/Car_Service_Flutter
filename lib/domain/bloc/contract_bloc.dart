@@ -14,6 +14,7 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<DeleteContractEvent>(_deleteContractEvent);
     on<EditContractEvent>(_editContractEvent);
     on<GetCurrentRowEvent>(_getCurrentRowEvent);
+    on<SearchContractEvent>(_searchContractEvent);
   }
 
   _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) {
@@ -51,7 +52,27 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
   }
 
   _getCurrentRowEvent(GetCurrentRowEvent event, Emitter<ContractState> emit) {
-    emit(ContractCurrentRowInitialState(
-        row: _contractsRows[_selectedContractRow]));
+    if (_selectedContractRow == -1 || _contractsRows.isEmpty) {
+      return;
+    } else {
+      emit(ContractCurrentRowInitialState(
+          row: _contractsRows[_selectedContractRow]));
+    }
+  }
+
+  _searchContractEvent(SearchContractEvent event, Emitter<ContractState> emit) {
+    _searchedRows.clear();
+    if (_contractsRows.isEmpty) {
+      return;
+    } else if (event.carBrand.isNotEmpty && event.carModel.isNotEmpty) {
+      for (var item in _contractsRows) {
+        var contactRow = item.cells.values.map((e) => e.value);
+        if (contactRow.elementAt(1) == event.carBrand &&
+            contactRow.elementAt(2) == event.carModel) {
+          _searchedRows.add(item);
+        }
+      }
+      emit(SearchedTableInitialState(searchedRows: _searchedRows));
+    }
   }
 }

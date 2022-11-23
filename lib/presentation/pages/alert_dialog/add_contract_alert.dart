@@ -2,8 +2,9 @@ import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-List<int> list1 = <int>[1, 2, 3, 4];
-List<int> list2 = <int>[11, 22, 33, 44];
+List<int> listOfWorks = <int>[1, 2, 3, 4];
+List<int> listOfWorkers = <int>[11, 22, 33, 44];
+List<int> listOfSTS = <int>[154265, 195728, 105732];
 
 class AddContractAlert extends StatefulWidget {
   const AddContractAlert({Key? key, required this.contractBloc})
@@ -19,20 +20,20 @@ class _AddContractAlertState extends State<AddContractAlert> {
   @override
   void initState() {
     super.initState();
-    dropdown1Value = list1.first;
-    dropdown2Value = list2.first;
+    dropdownWORKValue = listOfWorks.first;
+    dropdownWORKERValue = listOfWorkers.first;
+    dropdownSTSValue = listOfSTS.first;
   }
 
-  late int dropdown1Value;
-  late int dropdown2Value;
+  late int dropdownWORKValue;
+  late int dropdownWORKERValue;
+  late int dropdownSTSValue;
 
-  TextEditingController sts = TextEditingController();
   TextEditingController carBrand = TextEditingController();
   TextEditingController carModel = TextEditingController();
 
   bool validateCarBrandTextField = false;
   bool validateCarModelTextField = false;
-  bool validateSTSTextField = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +43,44 @@ class _AddContractAlertState extends State<AddContractAlert> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          Container(
             width: 200,
-            child: TextField(
+            margin: const EdgeInsets.only(bottom: 5, left: 8),
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              'Номер СТС',
+              style: TextStyle(fontSize: 13, color: Colors.black38),
+            ),
+          ),
+          Container(
+            width: 200,
+            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Colors.black38, width: 1.2),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                focusColor: Colors.transparent,
+                isExpanded: true,
+                value: dropdownSTSValue,
+                alignment: Alignment.center,
+                items: listOfSTS.map<DropdownMenuItem<int>>((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    dropdownSTSValue = value!;
+                  });
+                },
+              ),
+            ),
+          ),
+          /*TextField(
               maxLength: 6,
               controller: sts,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -53,8 +89,8 @@ class _AddContractAlertState extends State<AddContractAlert> {
                 labelText: 'Номер СТС',
                 errorText: validateSTSTextField ? 'Требуется ввод' : null,
               ),
-            ),
-          ),
+            ),*/
+
           const SizedBox(
             height: 20,
           ),
@@ -112,9 +148,9 @@ class _AddContractAlertState extends State<AddContractAlert> {
               child: DropdownButton<int>(
                 focusColor: Colors.transparent,
                 isExpanded: true,
-                value: dropdown1Value,
+                value: dropdownWORKValue,
                 alignment: Alignment.center,
-                items: list1.map<DropdownMenuItem<int>>((int value) {
+                items: listOfWorks.map<DropdownMenuItem<int>>((int value) {
                   return DropdownMenuItem<int>(
                     value: value,
                     child: Text(value.toString()),
@@ -122,7 +158,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    dropdown1Value = value!;
+                    dropdownWORKValue = value!;
                   });
                 },
               ),
@@ -150,9 +186,9 @@ class _AddContractAlertState extends State<AddContractAlert> {
               child: DropdownButton<int>(
                 focusColor: Colors.transparent,
                 isExpanded: true,
-                value: dropdown2Value,
+                value: dropdownWORKERValue,
                 alignment: Alignment.center,
-                items: list2.map<DropdownMenuItem<int>>((int value) {
+                items: listOfWorkers.map<DropdownMenuItem<int>>((int value) {
                   return DropdownMenuItem<int>(
                     value: value,
                     child: Text(value.toString()),
@@ -160,7 +196,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    dropdown2Value = value!;
+                    dropdownWORKERValue = value!;
                   });
                 },
               ),
@@ -171,22 +207,27 @@ class _AddContractAlertState extends State<AddContractAlert> {
       actions: [
         TextButton(
           onPressed: () {
-            if (carModel.text.isEmpty ||
-                carBrand.text.isEmpty ||
-                sts.text.isEmpty) {
+            if (carBrand.text.isEmpty && carModel.text.isEmpty) {
               setState(() {
                 validateCarBrandTextField = true;
                 validateCarModelTextField = true;
-                validateSTSTextField = true;
+              });
+            } else if (carModel.text.isEmpty) {
+              setState(() {
+                validateCarModelTextField = true;
+              });
+            } else if (carBrand.text.isEmpty) {
+              setState(() {
+                validateCarBrandTextField = true;
               });
             } else {
-              Navigator.pop(context);
+              Navigator.pop(context, []);
               widget.contractBloc.add(AddContractEvent(
-                  stsNum: int.parse(sts.text),
+                  stsNum: dropdownSTSValue,
                   carBrand: carBrand.text,
                   carModel: carModel.text,
-                  workID: dropdown1Value,
-                  workerID: dropdown2Value));
+                  workID: dropdownWORKValue,
+                  workerID: dropdownWORKERValue));
             }
           },
           child: const Text('Добавить'),

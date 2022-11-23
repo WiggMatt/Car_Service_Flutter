@@ -11,6 +11,13 @@ List<PlutoColumn> columns = [
     type: PlutoColumnType.number(),
   ),
 
+  /* /// Text Column definition
+  PlutoColumn(
+    title: 'Фамилия владельца',
+    field: 'owner_field',
+    type: PlutoColumnType.text(),
+  ),*/
+
   /// Text Column definition
   PlutoColumn(
     title: 'Марка авто',
