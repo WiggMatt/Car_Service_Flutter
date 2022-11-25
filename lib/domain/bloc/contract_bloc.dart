@@ -15,6 +15,7 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<EditContractEvent>(_editContractEvent);
     on<GetCurrentRowEvent>(_getCurrentRowEvent);
     on<SearchContractEvent>(_searchContractEvent);
+    on<SearchAlertEvent>(_changeSearchAlert);
   }
 
   _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) {
@@ -73,6 +74,22 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
         }
       }
       emit(SearchedTableInitialState(searchedRows: _searchedRows));
+    }
+  }
+
+  _changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
+    if (_contractsRows.isEmpty) {
+      return;
+    } else {
+      for (var item in _contractsRows) {
+        var contactRow = item.cells.values.map((e) => e.value);
+        if (contactRow.elementAt(0).toString() == event.stsNum) {
+          var currentModel = contactRow.elementAt(2);
+          var currentBrand = contactRow.elementAt(1);
+          emit(SearchAlertInitState(model: currentModel, brand: currentBrand));
+          break;
+        }
+      }
     }
   }
 }

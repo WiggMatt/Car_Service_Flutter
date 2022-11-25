@@ -56,3 +56,9 @@ class SearchContractEvent extends ContractEvent {
       required this.workerID,
       required this.workID});
 }
+
+class SearchAlertEvent extends ContractEvent {
+  final String stsNum;
+
+  SearchAlertEvent({required this.stsNum});
+}

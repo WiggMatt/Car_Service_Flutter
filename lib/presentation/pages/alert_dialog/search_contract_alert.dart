@@ -40,10 +40,18 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
 
   @override
   Widget build(BuildContext context) {
+    widget.contractBloc
+        .add(SearchAlertEvent(stsNum: dropdownSTSValue.toString()));
     return BlocListener<ContractBloc, ContractState>(
       listener: (context, state) {
         if (state is SearchedTableInitialState) {
           list = state.searchedRows;
+        }
+        if (state is SearchAlertInitState) {
+          setState(() {
+            carBrand.text = state.brand;
+            carModel.text = state.model;
+          });
         }
       },
       child: AlertDialog(
@@ -95,6 +103,7 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
             SizedBox(
               width: 200,
               child: TextField(
+                enabled: false,
                 maxLength: 10,
                 controller: carBrand,
                 inputFormatters: [
@@ -114,6 +123,7 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
             SizedBox(
               width: 200,
               child: TextField(
+                enabled: false,
                 controller: carModel,
                 maxLength: 10,
                 inputFormatters: [

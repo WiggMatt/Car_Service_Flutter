@@ -24,3 +24,10 @@ class ContractCurrentRowInitialState extends ContractState {
 
   ContractCurrentRowInitialState({required this.row});
 }
+
+class SearchAlertInitState extends ContractState {
+  final String model;
+  final String brand;
+
+  SearchAlertInitState({required this.model, required this.brand});
+}
