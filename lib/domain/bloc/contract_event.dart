@@ -4,18 +4,20 @@ part of 'contract_bloc.dart';
 abstract class ContractEvent {}
 
 class AddContractEvent extends ContractEvent {
-  final int stsNum;
+  final String stsNum;
   final String carBrand;
   final String carModel;
-  final int workerID;
-  final int workID;
+  final String workerName;
+  final String workDesc;
+  final String payment;
 
   AddContractEvent(
       {required this.stsNum,
       required this.carBrand,
       required this.carModel,
-      required this.workerID,
-      required this.workID});
+      required this.workerName,
+      required this.workDesc,
+      required this.payment});
 }
 
 class DeleteContractEvent extends ContractEvent {}
@@ -62,3 +64,7 @@ class SearchAlertEvent extends ContractEvent {
 
   SearchAlertEvent({required this.stsNum});
 }
+
+class LoadingContractsTableEvent extends ContractEvent {}
+
+class FillAddEditAlertsEvent extends ContractEvent {}

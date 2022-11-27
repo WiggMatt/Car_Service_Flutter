@@ -8,15 +8,8 @@ List<PlutoColumn> columns = [
   PlutoColumn(
     title: 'Номер СТС',
     field: 'sts_field',
-    type: PlutoColumnType.number(),
-  ),
-
-  /* /// Text Column definition
-  PlutoColumn(
-    title: 'Фамилия владельца',
-    field: 'owner_field',
     type: PlutoColumnType.text(),
-  ),*/
+  ),
 
   /// Text Column definition
   PlutoColumn(
@@ -34,38 +27,38 @@ List<PlutoColumn> columns = [
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Код работы',
+    title: 'Наименование работы',
     field: 'work_field',
     type: PlutoColumnType.text(),
   ),
 
-/*  /// Text Column definition
+  /// Text Column definition
   PlutoColumn(
-    title: 'Итоговая стоимость',
+    title: 'Фамилия работника',
+    field: 'worker_field',
+    type: PlutoColumnType.text(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Стоимость работы',
     field: 'coast_field',
     type: PlutoColumnType.number(),
-  ),*/
-
-  /// Text Column definition
-  PlutoColumn(
-    title: 'ID работника',
-    field: 'worker_field',
-    type: PlutoColumnType.number(),
-  ),
-
-/*  /// Text Column definition
-  PlutoColumn(
-    title: 'Дата обращения',
-    field: 'date_of_application_field',
-    type: PlutoColumnType.date(),
   ),
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Дата окончания',
-    field: 'end_date_field',
-    type: PlutoColumnType.date(),
-  ),*/
+    title: 'Готовность',
+    field: 'ready_field',
+    type: PlutoColumnType.text(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Оплата',
+    field: 'payment_field',
+    type: PlutoColumnType.text(),
+  ),
 ];
 
 class ContractsTable extends StatefulWidget {

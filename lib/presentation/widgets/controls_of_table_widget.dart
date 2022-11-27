@@ -40,6 +40,7 @@ class _ControlsOfTableState extends State<ControlsOfTable> {
                         showDialog(
                             context: context,
                             builder: (context) {
+                              bloc.add(FillAddEditAlertsEvent());
                               return AddContractAlert(contractBloc: bloc);
                             });
                       },

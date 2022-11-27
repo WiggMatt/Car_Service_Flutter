@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:car_service/data/repository/tables_repository_impl.dart';
 import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:car_service/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,9 @@ class BlocWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ContractBloc>(
-      create: (context) => ContractBloc(),
+      create: (context) =>
+          ContractBloc(repository: TablesRepositoryImplementation())
+            ..add(LoadingContractsTableEvent()),
       child: MyApp(),
     );
   }

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:car_service/domain/models/data_collection.dart';
+import 'package:car_service/domain/repository/domain_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -8,7 +10,8 @@ part 'contract_event.dart';
 part 'contract_state.dart';
 
 class ContractBloc extends Bloc<ContractEvent, ContractState> {
-  ContractBloc() : super(ContractInitialState(contractsRows: [])) {
+  ContractBloc({required this.repository})
+      : super(ContractInitialState(contractsRows: [])) {
     on<AddContractEvent>(_addContractEvent);
     on<ChangedSelectedContractEvent>(_changeSelectedContractEvent);
     on<DeleteContractEvent>(_deleteContractEvent);
@@ -16,17 +19,42 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<GetCurrentRowEvent>(_getCurrentRowEvent);
     on<SearchContractEvent>(_searchContractEvent);
     on<SearchAlertEvent>(_changeSearchAlert);
+    on<LoadingContractsTableEvent>(_loadingContractsTable);
+    on<FillAddEditAlertsEvent>(_fillAddEditAlerts);
   }
 
-  _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) {
-    final item = PlutoRow(cells: {
+  final DomainRepository repository;
+
+  _fillAddEditAlerts(
+      FillAddEditAlertsEvent event, Emitter<ContractState> emit) {
+    emit(FillAddEditAlertsInitState(
+        listOfSts: models.listOfSts,
+        listOfWorks: models.listOfWorks,
+        listOfWorkers: models.listOfWorkers,
+        listOfPayment: models.listOfPayment,
+        listOfReady: models.listOfReady));
+  }
+
+  _loadingContractsTable(
+      LoadingContractsTableEvent event, Emitter<ContractState> emit) async {
+    models = await repository.onStartLoadContractRows();
+    emit(ContractInitialState(contractsRows: models.loadedList));
+  }
+
+  _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) async {
+    /* final item = PlutoRow(cells: {
       'sts_field': PlutoCell(value: event.stsNum),
       'brand_auto_field': PlutoCell(value: event.carBrand),
       'model_auto_field': PlutoCell(value: event.carModel),
-      'work_field': PlutoCell(value: event.workID),
-      'worker_field': PlutoCell(value: event.workerID),
-    });
-    _contractsRows.add(item);
+      'work_field': PlutoCell(value: event.workDesc),
+      'worker_field': PlutoCell(value: event.workerName),
+      'coast_field': PlutoCell(value: event.stsNum),
+      'ready_field':
+          PlutoCell(value: event.stsNum == 0 ? 'В процессе' : 'Выполнено'),
+      'payment_field':
+          PlutoCell(value: event.stsNum == 0 ? 'Не оплачено' : 'Оплачено'),
+    });*/
+
     emit(ContractInitialState(contractsRows: _contractsRows));
   }
 
