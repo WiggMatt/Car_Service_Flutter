@@ -21,9 +21,23 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<SearchAlertEvent>(_changeSearchAlert);
     on<LoadingContractsTableEvent>(_loadingContractsTable);
     on<FillAddEditAlertsEvent>(_fillAddEditAlerts);
+    on<LoadingClientsTableEvent>(_loadingClientsTable);
+    on<SwitchSTSEvent>(_switchSTSEvent);
+    on<SwitchSurnameEvent>(_switchSurnameEvent);
   }
 
   final DomainRepository repository;
+
+  _switchSurnameEvent(
+      SwitchSurnameEvent event, Emitter<ContractState> emit) async {
+    final list = await repository.onSurnameSwitch(event);
+    emit(WorksForCurrentWorkerState(listOfWorks: list));
+  }
+
+  _switchSTSEvent(SwitchSTSEvent event, Emitter<ContractState> emit) async {
+    final list = await repository.onSwitchSTS(event);
+    emit(CurrentModelAndBrandInitState(model: list.last, brand: list.first));
+  }
 
   _fillAddEditAlerts(
       FillAddEditAlertsEvent event, Emitter<ContractState> emit) {
@@ -38,23 +52,18 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
   _loadingContractsTable(
       LoadingContractsTableEvent event, Emitter<ContractState> emit) async {
     models = await repository.onStartLoadContractRows();
-    emit(ContractInitialState(contractsRows: models.loadedList));
+    emit(ContractInitialState(contractsRows: models.loadedContractsList));
+  }
+
+  _loadingClientsTable(
+      LoadingClientsTableEvent event, Emitter<ContractState> emit) async {
+    models = await repository.onStartLoadClientsRows();
+    emit(ClientsInitialState(clientsRows: models.loadedClientsList));
   }
 
   _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) async {
-    /* final item = PlutoRow(cells: {
-      'sts_field': PlutoCell(value: event.stsNum),
-      'brand_auto_field': PlutoCell(value: event.carBrand),
-      'model_auto_field': PlutoCell(value: event.carModel),
-      'work_field': PlutoCell(value: event.workDesc),
-      'worker_field': PlutoCell(value: event.workerName),
-      'coast_field': PlutoCell(value: event.stsNum),
-      'ready_field':
-          PlutoCell(value: event.stsNum == 0 ? 'В процессе' : 'Выполнено'),
-      'payment_field':
-          PlutoCell(value: event.stsNum == 0 ? 'Не оплачено' : 'Оплачено'),
-    });*/
-
+    await repository.onAddContract(event);
+    add(LoadingContractsTableEvent());
     emit(ContractInitialState(contractsRows: _contractsRows));
   }
 
@@ -114,7 +123,8 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
         if (contactRow.elementAt(0).toString() == event.stsNum) {
           var currentModel = contactRow.elementAt(2);
           var currentBrand = contactRow.elementAt(1);
-          emit(SearchAlertInitState(model: currentModel, brand: currentBrand));
+          emit(CurrentModelAndBrandInitState(
+              model: currentModel, brand: currentBrand));
           break;
         }
       }

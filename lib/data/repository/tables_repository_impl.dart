@@ -1,8 +1,8 @@
 import 'package:car_service/data/repository/querys.dart';
+import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:car_service/domain/models/data_collection.dart';
 import 'package:car_service/domain/repository/domain_repository.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:pluto_grid/src/model/pluto_row.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class TablesRepositoryImplementation implements DomainRepository {
@@ -73,13 +73,70 @@ class TablesRepositoryImplementation implements DomainRepository {
         'payment_field': PlutoCell(
             value: item['isPaidFor'] == 0 ? 'Не оплачено' : 'Оплачено'),
       });
-      loadingData.loadedList.add(row);
+      loadingData.loadedContractsList.add(row);
     }
     await _dataBase.close();
     return loadingData;
   }
 
   @override
-  Future<void> onAddContract(int stsNum, String carBrand, String carModel,
-      int workerID, int workID) async {}
+  Future<LoadingData> onStartLoadClientsRows() async {
+    LoadingData loadingData = LoadingData();
+    _dataBase = await databaseFactory.openDatabase(path);
+    final List<Map<String, dynamic>> maps =
+        await _dataBase.rawQuery(loadClientsTableQuery);
+
+    for (var item in maps) {
+      PlutoRow row = PlutoRow(cells: {
+        'brand_field': PlutoCell(value: item['carBrand']),
+        'model_field': PlutoCell(value: item['carModel']),
+        'sts_field': PlutoCell(value: item['stsNum']),
+        'name_field': PlutoCell(value: item['firstName']),
+        'surname_field': PlutoCell(value: item['lastName']),
+        'telephone_field': PlutoCell(value: item['telephoneNum']),
+      });
+      loadingData.loadedClientsList.add(row);
+    }
+    await _dataBase.close();
+    return loadingData;
+  }
+
+  @override
+  Future<void> onAddContract(AddContractEvent event) async {
+    _dataBase = await databaseFactory.openDatabase(path);
+    await _dataBase.rawInsert(addContractQuery, [
+      int.parse(event.stsNum),
+      event.payment == "Не оплачено" ? 0 : 1,
+      event.workDesc,
+      event.workerName
+    ]);
+    await _dataBase.close();
+  }
+
+  @override
+  Future<List<String>> onSwitchSTS(SwitchSTSEvent event) async {
+    _dataBase = await databaseFactory.openDatabase(path);
+    List<String> list = [];
+    final List<Map<String, dynamic>> modelsAndBrandsMap = await _dataBase
+        .rawQuery(getBrandAndModelOfCarQuery, [int.parse(event.stsNum)]);
+    for (var item in modelsAndBrandsMap) {
+      list.add(item['carBrand']);
+      list.add(item['carModel']);
+    }
+    return list;
+    await _dataBase.close();
+  }
+
+  @override
+  Future<List<String>> onSurnameSwitch(SwitchSurnameEvent event) async {
+    _dataBase = await databaseFactory.openDatabase(path);
+    List<String> list = [];
+    final List<Map<String, dynamic>> modelsAndBrandsMap =
+        await _dataBase.rawQuery(getWorksDescBySurnameQuery, [event.surname]);
+    for (var item in modelsAndBrandsMap) {
+      list.add(item['repairDescription']);
+    }
+    return list;
+    await _dataBase.close();
+  }
 }

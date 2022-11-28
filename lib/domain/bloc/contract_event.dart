@@ -68,3 +68,17 @@ class SearchAlertEvent extends ContractEvent {
 class LoadingContractsTableEvent extends ContractEvent {}
 
 class FillAddEditAlertsEvent extends ContractEvent {}
+
+class LoadingClientsTableEvent extends ContractEvent {}
+
+class SwitchSTSEvent extends ContractEvent {
+  final String stsNum;
+
+  SwitchSTSEvent({required this.stsNum});
+}
+
+class SwitchSurnameEvent extends ContractEvent {
+  final String surname;
+
+  SwitchSurnameEvent({required this.surname});
+}

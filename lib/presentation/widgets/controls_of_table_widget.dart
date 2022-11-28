@@ -83,9 +83,9 @@ class _ControlsOfTableState extends State<ControlsOfTable> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const ScreenForClients()));
+                                    ScreenForClients(contractBloc: bloc)));
                       },
-                      child: const Text('Второй экран')),
+                      child: const Text('Таблица с клиентами')),
                 ],
               ),
             ),

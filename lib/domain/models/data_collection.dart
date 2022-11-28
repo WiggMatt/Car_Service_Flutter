@@ -6,5 +6,6 @@ class LoadingData {
   List<String> listOfWorkers = [];
   final List<String> listOfPayment = ['Не оплачено', 'Оплчено'];
   final List<String> listOfReady = ['В процессе', 'Выполнено'];
-  List<PlutoRow> loadedList = [];
+  List<PlutoRow> loadedClientsList = [];
+  List<PlutoRow> loadedContractsList = [];
 }

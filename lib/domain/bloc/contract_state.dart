@@ -14,6 +14,12 @@ class ContractInitialState extends ContractState {
   ContractInitialState({required this.contractsRows});
 }
 
+class ClientsInitialState extends ContractState {
+  final List<PlutoRow> clientsRows;
+
+  ClientsInitialState({required this.clientsRows});
+}
+
 class SearchedTableInitialState extends ContractState {
   final List<PlutoRow> searchedRows;
 
@@ -26,11 +32,11 @@ class ContractCurrentRowInitialState extends ContractState {
   ContractCurrentRowInitialState({required this.row});
 }
 
-class SearchAlertInitState extends ContractState {
+class CurrentModelAndBrandInitState extends ContractState {
   final String model;
   final String brand;
 
-  SearchAlertInitState({required this.model, required this.brand});
+  CurrentModelAndBrandInitState({required this.model, required this.brand});
 }
 
 class FillAddEditAlertsInitState extends ContractState {
@@ -47,4 +53,10 @@ class FillAddEditAlertsInitState extends ContractState {
     required this.listOfPayment,
     required this.listOfReady,
   });
+}
+
+class WorksForCurrentWorkerState extends ContractState {
+  final List<String> listOfWorks;
+
+  WorksForCurrentWorkerState({required this.listOfWorks});
 }

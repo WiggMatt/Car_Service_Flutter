@@ -47,7 +47,7 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
         if (state is SearchedTableInitialState) {
           list = state.searchedRows;
         }
-        if (state is SearchAlertInitState) {
+        if (state is CurrentModelAndBrandInitState) {
           setState(() {
             carBrand.text = state.brand;
             carModel.text = state.model;
