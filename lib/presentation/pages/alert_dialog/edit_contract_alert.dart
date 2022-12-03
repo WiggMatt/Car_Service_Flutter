@@ -1,11 +1,6 @@
 import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-List<int> listOfWorks = <int>[1, 2, 3, 4];
-List<int> listOfWorkers = <int>[11, 22, 33, 44];
-List<int> listOfSTS = <int>[154265, 195728, 105732];
 
 class EditContractAlert extends StatefulWidget {
   const EditContractAlert({Key? key, required this.contractBloc})
@@ -18,37 +13,99 @@ class EditContractAlert extends StatefulWidget {
 }
 
 class _EditContractAlertState extends State<EditContractAlert> {
+  List<String> listOfWorks = [''];
+  List<String> listOfWorkers = [''];
+  List<String> listOfPayment = [''];
+  List<String> listOfReadiness = [''];
+
   @override
   void initState() {
     super.initState();
     dropdownWORKValue = listOfWorks.first;
     dropdownWORKERValue = listOfWorkers.first;
-    dropdownSTSValue = listOfSTS.first;
+    dropdownPaymentValue = listOfPayment.first;
+    dropdownReadinessValue = listOfReadiness.first;
   }
 
-  late int dropdownWORKValue;
-  late int dropdownWORKERValue;
-  late int dropdownSTSValue;
+  late String dropdownWORKValue;
+  late String dropdownWORKERValue;
+  late String dropdownPaymentValue;
+  late String dropdownReadinessValue;
+  int counter = 0;
+  int counter2 = 0;
+  int counter3 = 0;
 
+  TextEditingController stsNum = TextEditingController();
   TextEditingController carBrand = TextEditingController();
   TextEditingController carModel = TextEditingController();
 
-  bool validateCarBrandTextField = false;
-  bool validateCarModelTextField = false;
+  late final String stsFromRow;
+  late final String brandFromRow;
+  late final String modelFromRow;
+  late final String workFromRow;
+  late final String workerFromRow;
+  late final String paymentFromRow;
+  late final String readinessFromRow;
 
   @override
   Widget build(BuildContext context) {
+    widget.contractBloc.add(FillAddEditAlertsEvent());
+    widget.contractBloc.add(GetCurrentRowEvent());
+    if (dropdownWORKERValue != "") {
+      widget.contractBloc.add(SwitchSurnameEvent(surname: dropdownWORKERValue));
+    }
+
     return BlocListener<ContractBloc, ContractState>(
       listener: (context, state) {
-        if (state is ContractCurrentRowInitialState) {
+        if (state is ContractCurrentRowInitialState && counter3 == 0) {
           var row =
               state.row.cells.values.map((e) => e.value.toString()).toList();
+          stsFromRow = row[0];
+          brandFromRow = row[1];
+          modelFromRow = row[2];
+          workFromRow = row[3];
+          workerFromRow = row[4];
+          paymentFromRow = row[7];
+          readinessFromRow = row[6];
+          counter3++;
+        }
+        if (state is FillAddEditAlertsInitState && counter2 == 0) {
           setState(() {
-            dropdownSTSValue = int.parse(row[0]);
-            carBrand.text = row[1];
-            carModel.text = row[2];
-            dropdownWORKValue = int.parse(row[3]);
-            dropdownWORKERValue = int.parse(row[4]);
+            stsNum.text = stsFromRow;
+            carBrand.text = brandFromRow;
+            carModel.text = modelFromRow;
+            listOfWorks = state.listOfWorks;
+            listOfWorkers = state.listOfWorkers;
+            listOfPayment = state.listOfPayment;
+            listOfReadiness = state.listOfReady;
+            for (var item in listOfWorks) {
+              if (item == workFromRow) dropdownWORKValue = item;
+            }
+            for (var item in listOfWorkers) {
+              if (item == workerFromRow) {
+                dropdownWORKERValue = item;
+              }
+            }
+            for (var item in listOfPayment) {
+              if (item == paymentFromRow) dropdownPaymentValue = item;
+            }
+            for (var item in listOfReadiness) {
+              if (item == readinessFromRow) dropdownReadinessValue = item;
+            }
+            counter2++;
+          });
+        }
+        if (state is WorksForCurrentWorkerState && counter == 0) {
+          setState(() {
+            listOfWorks = state.listOfWorks;
+            for (var item in listOfWorks) {
+              if (item == workFromRow) {
+                dropdownWORKValue = item;
+              } else {
+                dropdownWORKValue = listOfWorks.first;
+              }
+            }
+            counter++;
           });
         }
       },
@@ -58,72 +115,28 @@ class _EditContractAlertState extends State<EditContractAlert> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(bottom: 5, left: 8),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Номер СТС',
-                style: TextStyle(fontSize: 13, color: Colors.black38),
-              ),
-            ),
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.black38, width: 1.2),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  focusColor: Colors.transparent,
-                  isExpanded: true,
-                  value: dropdownSTSValue,
-                  alignment: Alignment.center,
-                  items: listOfSTS.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropdownSTSValue = value!;
-                    });
-                  },
-                ),
-              ),
-            ),
-            /*SizedBox(
+            SizedBox(
               width: 200,
               child: TextField(
-                maxLength: 6,
-                controller: sts,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                enabled: false,
+                controller: stsNum,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Номер СТС',
-                  errorText: validateSTSTextField ? 'Требуется ввод' : null,
                 ),
               ),
-            ),*/
+            ),
             const SizedBox(
               height: 20,
             ),
             SizedBox(
               width: 200,
               child: TextField(
-                maxLength: 10,
+                enabled: false,
                 controller: carBrand,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
-                ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Марка авто',
-                  errorText:
-                      validateCarBrandTextField ? 'Требуется ввод' : null,
                 ),
               ),
             ),
@@ -133,63 +146,23 @@ class _EditContractAlertState extends State<EditContractAlert> {
             SizedBox(
               width: 200,
               child: TextField(
+                enabled: false,
                 controller: carModel,
-                maxLength: 10,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
-                ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Модель авто',
-                  errorText:
-                      validateCarModelTextField ? 'Требуется ввод' : null,
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             Container(
               width: 200,
               margin: const EdgeInsets.only(bottom: 5, left: 8),
               alignment: Alignment.centerLeft,
               child: const Text(
-                'ID работника',
-                style: TextStyle(fontSize: 13, color: Colors.black38),
-              ),
-            ),
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.black38, width: 1.2),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  focusColor: Colors.transparent,
-                  isExpanded: true,
-                  value: dropdownWORKValue,
-                  alignment: Alignment.center,
-                  items: listOfWorks.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropdownWORKValue = value!;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(width: 30),
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(bottom: 5, left: 8),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'ID работы',
+                'Фамилия работника',
                 style: TextStyle(fontSize: 13, color: Colors.black38),
               ),
             ),
@@ -202,20 +175,137 @@ class _EditContractAlertState extends State<EditContractAlert> {
                 border: Border.all(color: Colors.black38, width: 1.2),
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
+                child: DropdownButton<String>(
                   focusColor: Colors.transparent,
                   isExpanded: true,
                   value: dropdownWORKERValue,
                   alignment: Alignment.center,
-                  items: listOfWorkers.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
+                  items: listOfWorkers.map((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value.toString()),
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
                       dropdownWORKERValue = value!;
+                      counter = 0;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Требуемая работа',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownWORKValue,
+                  alignment: Alignment.center,
+                  items:
+                      listOfWorks.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownWORKValue = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Оплата',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownPaymentValue,
+                  alignment: Alignment.center,
+                  items: listOfPayment.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownPaymentValue = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Готовность',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownReadinessValue,
+                  alignment: Alignment.center,
+                  items: listOfReadiness
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownReadinessValue = value!;
                     });
                   },
                 ),
@@ -226,28 +316,15 @@ class _EditContractAlertState extends State<EditContractAlert> {
         actions: [
           TextButton(
             onPressed: () {
-              if (carBrand.text.isEmpty && carModel.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                  validateCarModelTextField = true;
-                });
-              } else if (carModel.text.isEmpty) {
-                setState(() {
-                  validateCarModelTextField = true;
-                });
-              } else if (carBrand.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                });
-              } else {
-                Navigator.pop(context);
-                widget.contractBloc.add(EditContractEvent(
-                    stsNum: dropdownSTSValue,
-                    carBrand: carBrand.text,
-                    carModel: carModel.text,
-                    workID: dropdownWORKValue,
-                    workerID: dropdownWORKERValue));
-              }
+              Navigator.pop(context);
+              widget.contractBloc.add(EditContractEvent(
+                  stsNum: stsNum.text,
+                  carBrand: carBrand.text,
+                  carModel: carModel.text,
+                  workDesc: dropdownWORKValue,
+                  workerName: dropdownWORKERValue,
+                  payment: dropdownPaymentValue,
+                  readiness: dropdownReadinessValue));
             },
             child: const Text('Изменить'),
           ),

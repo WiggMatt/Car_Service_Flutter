@@ -1,4 +1,5 @@
-import 'package:car_service/presentation/widgets/controls_of_table_widget.dart';
+import 'package:car_service/presentation/widgets/controls_of_contracts_table_widget.dart';
+import 'package:car_service/presentation/widgets/drawer_widget.dart';
 import 'package:car_service/presentation/widgets/table_contract_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MainDrawer(),
       appBar: AppBar(
         actions: [
           IconButton(
@@ -30,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
           Expanded(flex: 6, child: ContractsTable()),
           Expanded(
             flex: 2,
-            child: ControlsOfTable(),
+            child: ControlsOfContractsTable(),
           )
         ],
       ),

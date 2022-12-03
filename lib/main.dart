@@ -1,5 +1,9 @@
 import 'dart:io';
-import 'package:car_service/data/repository/tables_repository_impl.dart';
+import 'package:car_service/data/repository/clients_repository_impl.dart';
+import 'package:car_service/data/repository/contracts_repository_impl.dart';
+import 'package:car_service/data/repository/mechanics_and_works_repository_impl.dart';
+import 'package:car_service/domain/bloc/bloc_for_clients/client_bloc.dart';
+import 'package:car_service/domain/bloc/bloc_for_mechanics_and_works/mechanics_and_works_bloc.dart';
 import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:car_service/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +40,23 @@ class BlocWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ContractBloc>(
-      create: (context) =>
-          ContractBloc(repository: TablesRepositoryImplementation())
-            ..add(LoadingContractsTableEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ContractBloc>(
+          create: (context) =>
+              ContractBloc(repository: ContractsRepositoryImplementation())
+                ..add(LoadingContractsTableEvent()),
+        ),
+        BlocProvider<ClientBloc>(
+          create: (context) =>
+              ClientBloc(repository: ClientsRepositoryImplementation())
+                ..add(LoadingClientsTableEvent()),
+        ),
+        BlocProvider<MechanicsAndWorksBloc>(
+            create: (context) => MechanicsAndWorksBloc(
+                repository: MechanicsAndWorksRepositoryImplementation())
+              ..add(LoadingMechanicsAndWorksTableEvent()))
+      ],
       child: MyApp(),
     );
   }

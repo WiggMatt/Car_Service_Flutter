@@ -7,14 +7,15 @@ import 'package:car_service/presentation/pages/clients_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ControlsOfTable extends StatefulWidget {
-  const ControlsOfTable({Key? key}) : super(key: key);
+class ControlsOfContractsTable extends StatefulWidget {
+  const ControlsOfContractsTable({Key? key}) : super(key: key);
 
   @override
-  State<ControlsOfTable> createState() => _ControlsOfTableState();
+  State<ControlsOfContractsTable> createState() =>
+      _ControlsOfContractsTableState();
 }
 
-class _ControlsOfTableState extends State<ControlsOfTable> {
+class _ControlsOfContractsTableState extends State<ControlsOfContractsTable> {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<ContractBloc>(context);
@@ -53,6 +54,7 @@ class _ControlsOfTableState extends State<ControlsOfTable> {
                             context: context,
                             builder: (context) {
                               bloc.add(GetCurrentRowEvent());
+
                               return EditContractAlert(contractBloc: bloc);
                             });
                       },
@@ -76,16 +78,6 @@ class _ControlsOfTableState extends State<ControlsOfTable> {
                       },
                       child: const Text('Поиск записи')),
                   const SizedBox(height: 20, width: 60),
-                  ElevatedButton(
-                      style: buttonStyle,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ScreenForClients(contractBloc: bloc)));
-                      },
-                      child: const Text('Таблица с клиентами')),
                 ],
               ),
             ),

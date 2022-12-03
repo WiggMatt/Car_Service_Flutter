@@ -38,9 +38,6 @@ class _AddContractAlertState extends State<AddContractAlert> {
   TextEditingController carBrand = TextEditingController();
   TextEditingController carModel = TextEditingController();
 
-  bool validateCarBrandTextField = false;
-  bool validateCarModelTextField = false;
-
   @override
   Widget build(BuildContext context) {
     widget.contractBloc.add(FillAddEditAlertsEvent());
@@ -130,11 +127,9 @@ class _AddContractAlertState extends State<AddContractAlert> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
                 ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Марка авто',
-                  errorText:
-                      validateCarBrandTextField ? 'Требуется ввод' : null,
                 ),
               ),
             ),
@@ -150,11 +145,9 @@ class _AddContractAlertState extends State<AddContractAlert> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
                 ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Модель авто',
-                  errorText:
-                      validateCarModelTextField ? 'Требуется ввод' : null,
                 ),
               ),
             ),
@@ -280,29 +273,14 @@ class _AddContractAlertState extends State<AddContractAlert> {
         actions: [
           TextButton(
             onPressed: () {
-              if (carBrand.text.isEmpty && carModel.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                  validateCarModelTextField = true;
-                });
-              } else if (carModel.text.isEmpty) {
-                setState(() {
-                  validateCarModelTextField = true;
-                });
-              } else if (carBrand.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                });
-              } else {
-                Navigator.pop(context, []);
-                widget.contractBloc.add(AddContractEvent(
-                    stsNum: dropdownSTSValue,
-                    carBrand: carBrand.text,
-                    carModel: carModel.text,
-                    workDesc: dropdownWORKValue,
-                    workerName: dropdownWORKERValue,
-                    payment: dropdownPaymentValue));
-              }
+              Navigator.pop(context, []);
+              widget.contractBloc.add(AddContractEvent(
+                  stsNum: dropdownSTSValue,
+                  carBrand: carBrand.text,
+                  carModel: carModel.text,
+                  workDesc: dropdownWORKValue,
+                  workerName: dropdownWORKERValue,
+                  payment: dropdownPaymentValue));
             },
             child: const Text('Добавить'),
           ),

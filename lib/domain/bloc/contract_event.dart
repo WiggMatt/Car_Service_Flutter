@@ -24,39 +24,50 @@ class DeleteContractEvent extends ContractEvent {}
 
 class ChangedSelectedContractEvent extends ContractEvent {
   final int? selectedRow;
+
   ChangedSelectedContractEvent({required this.selectedRow});
 }
 
 class EditContractEvent extends ContractEvent {
-  final int stsNum;
+  final String stsNum;
   final String carBrand;
   final String carModel;
-  final int workerID;
-  final int workID;
+  final String workerName;
+  final String workDesc;
+  final String payment;
+  final String readiness;
 
-  EditContractEvent(
-      {required this.stsNum,
-      required this.carBrand,
-      required this.carModel,
-      required this.workerID,
-      required this.workID});
+  EditContractEvent({
+    required this.stsNum,
+    required this.carBrand,
+    required this.carModel,
+    required this.workerName,
+    required this.workDesc,
+    required this.payment,
+    required this.readiness,
+  });
 }
 
 class GetCurrentRowEvent extends ContractEvent {}
 
 class SearchContractEvent extends ContractEvent {
-  final int stsNum;
+  final String stsNum;
   final String carBrand;
   final String carModel;
-  final int workerID;
-  final int workID;
+  final String workerName;
+  final String workDesc;
+  final String payment;
+  final String readiness;
 
-  SearchContractEvent(
-      {required this.stsNum,
-      required this.carBrand,
-      required this.carModel,
-      required this.workerID,
-      required this.workID});
+  SearchContractEvent({
+    required this.stsNum,
+    required this.carBrand,
+    required this.carModel,
+    required this.workerName,
+    required this.workDesc,
+    required this.payment,
+    required this.readiness,
+  });
 }
 
 class SearchAlertEvent extends ContractEvent {
@@ -68,8 +79,6 @@ class SearchAlertEvent extends ContractEvent {
 class LoadingContractsTableEvent extends ContractEvent {}
 
 class FillAddEditAlertsEvent extends ContractEvent {}
-
-class LoadingClientsTableEvent extends ContractEvent {}
 
 class SwitchSTSEvent extends ContractEvent {
   final String stsNum;

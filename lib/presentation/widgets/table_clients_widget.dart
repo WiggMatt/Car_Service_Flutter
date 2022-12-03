@@ -1,9 +1,24 @@
+import 'package:car_service/domain/bloc/bloc_for_clients/client_bloc.dart';
 import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-List<PlutoColumn> columns = [
+List<PlutoColumn> clientsColumns = [
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Марка авто',
+    field: 'brand_field',
+    type: PlutoColumnType.text(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Модель авто',
+    field: 'model_field',
+    type: PlutoColumnType.text(),
+  ),
+
   /// Text Column definition
   PlutoColumn(
     title: 'Номер СТС',
@@ -13,73 +28,45 @@ List<PlutoColumn> columns = [
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Марка авто',
-    field: 'brand_auto_field',
+    title: 'Имя',
+    field: 'name_field',
     type: PlutoColumnType.text(),
   ),
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Модель авто',
-    field: 'model_auto_field',
+    title: 'Фамилия',
+    field: 'surname_field',
     type: PlutoColumnType.text(),
   ),
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Наименование работы',
-    field: 'work_field',
-    type: PlutoColumnType.text(),
-  ),
-
-  /// Text Column definition
-  PlutoColumn(
-    title: 'Фамилия работника',
-    field: 'worker_field',
-    type: PlutoColumnType.text(),
-  ),
-
-  /// Text Column definition
-  PlutoColumn(
-    title: 'Стоимость работы',
-    field: 'coast_field',
-    type: PlutoColumnType.number(),
-  ),
-
-  /// Text Column definition
-  PlutoColumn(
-    title: 'Готовность',
-    field: 'ready_field',
-    type: PlutoColumnType.text(),
-  ),
-
-  /// Text Column definition
-  PlutoColumn(
-    title: 'Оплата',
-    field: 'payment_field',
+    title: 'Номер телефона',
+    field: 'telephone_field',
     type: PlutoColumnType.text(),
   ),
 ];
 
-class ContractsTable extends StatefulWidget {
-  const ContractsTable({Key? key}) : super(key: key);
+class ClientsTable extends StatefulWidget {
+  const ClientsTable({Key? key, required this.clientBloc}) : super(key: key);
+
+  final ClientBloc clientBloc;
 
   @override
-  State<ContractsTable> createState() => _ContractsTableState();
+  State<ClientsTable> createState() => _ClientsTableState();
 }
 
-class _ContractsTableState extends State<ContractsTable> {
+class _ClientsTableState extends State<ClientsTable> {
   late final PlutoGridStateManager stateManager;
 
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<ContractBloc>(context);
-
-    return BlocConsumer<ContractBloc, ContractState>(
+    return BlocConsumer<ClientBloc, ClientState>(
       listener: (context, state) {
-        if (state is ContractInitialState) {
+        if (state is ClientsInitialState) {
           stateManager.removeAllRows();
-          stateManager.appendRows(loadedModels.loadedContractsList);
+          stateManager.appendRows(loadedModels.loadedClientsList);
         }
       },
       builder: (context, state) {
@@ -89,11 +76,8 @@ class _ContractsTableState extends State<ContractsTable> {
             columnSize: PlutoGridColumnSizeConfig(
                 autoSizeMode: PlutoAutoSizeMode.equal),
           ),
-          columns: columns,
+          columns: clientsColumns,
           rows: [],
-          onSelected: (PlutoGridOnSelectedEvent event) {
-            bloc.add(ChangedSelectedContractEvent(selectedRow: event.rowIdx));
-          },
           onLoaded: (event) => stateManager = event.stateManager,
         );
       },

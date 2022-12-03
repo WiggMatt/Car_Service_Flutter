@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-List<int> listOfWorks = <int>[1, 2, 3, 4];
-List<int> listOfWorkers = <int>[11, 22, 33, 44];
-List<int> listOfSTS = <int>[154265, 195728, 105732];
-
 class SearchContractAlert extends StatefulWidget {
   const SearchContractAlert({Key? key, required this.contractBloc})
       : super(key: key);
@@ -19,38 +15,67 @@ class SearchContractAlert extends StatefulWidget {
 }
 
 class _SearchContractAlertState extends State<SearchContractAlert> {
+  List<String> listOfWorks = [''];
+  List<String> listOfWorkers = [''];
+  List<String> listOfPayment = [''];
+  List<String> listOfSTS = [''];
+  List<String> listOfReadiness = [''];
+
   @override
   void initState() {
     super.initState();
     dropdownWORKValue = listOfWorks.first;
     dropdownWORKERValue = listOfWorkers.first;
     dropdownSTSValue = listOfSTS.first;
+    dropdownPaymentValue = listOfPayment.first;
+    dropdownReadinessValue = listOfReadiness.first;
   }
 
-  late int dropdownWORKValue;
-  late int dropdownWORKERValue;
-  late int dropdownSTSValue;
+  late String dropdownWORKValue;
+  late String dropdownWORKERValue;
+  late String dropdownSTSValue;
+  late String dropdownPaymentValue;
+  late String dropdownReadinessValue;
+
+  int counter = 0;
+  int counter2 = 0;
   var list;
 
   TextEditingController carBrand = TextEditingController();
   TextEditingController carModel = TextEditingController();
 
-  bool validateCarBrandTextField = false;
-  bool validateCarModelTextField = false;
-
   @override
   Widget build(BuildContext context) {
-    widget.contractBloc
-        .add(SearchAlertEvent(stsNum: dropdownSTSValue.toString()));
+    widget.contractBloc.add(FillAddEditAlertsEvent());
+    widget.contractBloc.add(SwitchSTSEvent(stsNum: dropdownSTSValue));
+    widget.contractBloc.add(SwitchSurnameEvent(surname: dropdownWORKERValue));
+
     return BlocListener<ContractBloc, ContractState>(
       listener: (context, state) {
-        if (state is SearchedTableInitialState) {
-          list = state.searchedRows;
+        if (state is FillAddEditAlertsInitState && counter == 0) {
+          setState(() {
+            listOfWorks = state.listOfWorks;
+            listOfWorkers = state.listOfWorkers;
+            listOfSTS = state.listOfSts;
+            listOfPayment = state.listOfPayment;
+            listOfReadiness = state.listOfReady;
+            dropdownWORKValue = listOfWorks.first;
+            dropdownWORKERValue = listOfWorkers.first;
+            dropdownSTSValue = listOfSTS.first;
+            dropdownPaymentValue = listOfPayment.first;
+            dropdownReadinessValue = listOfReadiness.first;
+            counter++;
+          });
         }
         if (state is CurrentModelAndBrandInitState) {
+          carBrand.text = state.brand;
+          carModel.text = state.model;
+        }
+        if (state is WorksForCurrentWorkerState && counter2 == 0) {
           setState(() {
-            carBrand.text = state.brand;
-            carModel.text = state.model;
+            listOfWorks = state.listOfWorks;
+            dropdownWORKValue = listOfWorks.first;
+            counter2++;
           });
         }
       },
@@ -78,15 +103,16 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
                 border: Border.all(color: Colors.black38, width: 1.2),
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
+                child: DropdownButton<String>(
                   focusColor: Colors.transparent,
                   isExpanded: true,
                   value: dropdownSTSValue,
                   alignment: Alignment.center,
-                  items: listOfSTS.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
+                  items:
+                      listOfSTS.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value.toString()),
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -109,11 +135,9 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
                 ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Марка авто',
-                  errorText:
-                      validateCarBrandTextField ? 'Требуется ввод' : null,
                 ),
               ),
             ),
@@ -129,11 +153,9 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
                 ],
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
                   labelText: 'Модель авто',
-                  errorText:
-                      validateCarModelTextField ? 'Требуется ввод' : null,
                 ),
               ),
             ),
@@ -142,45 +164,7 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
               margin: const EdgeInsets.only(bottom: 5, left: 8),
               alignment: Alignment.centerLeft,
               child: const Text(
-                'ID работника',
-                style: TextStyle(fontSize: 13, color: Colors.black38),
-              ),
-            ),
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.black38, width: 1.2),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  focusColor: Colors.transparent,
-                  isExpanded: true,
-                  value: dropdownWORKValue,
-                  alignment: Alignment.center,
-                  items: listOfWorks.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropdownWORKValue = value!;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(width: 30),
-            Container(
-              width: 200,
-              margin: const EdgeInsets.only(bottom: 5, left: 8),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'ID работы',
+                'Фамилия работника',
                 style: TextStyle(fontSize: 13, color: Colors.black38),
               ),
             ),
@@ -193,20 +177,139 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
                 border: Border.all(color: Colors.black38, width: 1.2),
               ),
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
+                child: DropdownButton<String>(
                   focusColor: Colors.transparent,
                   isExpanded: true,
                   value: dropdownWORKERValue,
                   alignment: Alignment.center,
-                  items: listOfWorkers.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
+                  items: listOfWorkers
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value.toString()),
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
                       dropdownWORKERValue = value!;
+                      counter2 = 0;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Требуемая работа',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownWORKValue,
+                  alignment: Alignment.center,
+                  items:
+                      listOfWorks.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownWORKValue = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Оплата',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownPaymentValue,
+                  alignment: Alignment.center,
+                  items: listOfPayment
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownPaymentValue = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(bottom: 5, left: 8),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Готовность',
+                style: TextStyle(fontSize: 13, color: Colors.black38),
+              ),
+            ),
+            Container(
+              width: 200,
+              margin: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.black38, width: 1.2),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  focusColor: Colors.transparent,
+                  isExpanded: true,
+                  value: dropdownReadinessValue,
+                  alignment: Alignment.center,
+                  items: listOfReadiness
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropdownReadinessValue = value!;
                     });
                   },
                 ),
@@ -217,33 +320,20 @@ class _SearchContractAlertState extends State<SearchContractAlert> {
         actions: [
           TextButton(
             onPressed: () {
-              if (carBrand.text.isEmpty && carModel.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                  validateCarModelTextField = true;
-                });
-              } else if (carModel.text.isEmpty) {
-                setState(() {
-                  validateCarModelTextField = true;
-                });
-              } else if (carBrand.text.isEmpty) {
-                setState(() {
-                  validateCarBrandTextField = true;
-                });
-              } else {
-                widget.contractBloc.add(SearchContractEvent(
-                    stsNum: dropdownSTSValue,
-                    carBrand: carBrand.text,
-                    carModel: carModel.text,
-                    workerID: dropdownWORKERValue,
-                    workID: dropdownWORKValue));
+              widget.contractBloc.add(SearchContractEvent(
+                  stsNum: dropdownSTSValue,
+                  carBrand: carBrand.text,
+                  carModel: carModel.text,
+                  workerName: dropdownWORKERValue,
+                  workDesc: dropdownWORKValue,
+                  readiness: dropdownReadinessValue,
+                  payment: dropdownPaymentValue));
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            SearchedContractsTableScreen(rows: list)));
-              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SearchedContractsTableScreen(rows: list)));
             },
             child: const Text('Поиск'),
           ),

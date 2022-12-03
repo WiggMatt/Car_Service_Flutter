@@ -45,7 +45,7 @@ String addContractQuery =
     WHERE repairDescription = ? AND lastName = ? ''';
 
 String getBrandAndModelOfCarQuery =
-    ''' SELECT cars.carBrand, cars.carModel FROM cars WHERE stsNum = ? ''';
+    '''SELECT cars.carBrand, cars.carModel FROM cars WHERE stsNum = ? ''';
 
 String getWorksDescBySurnameQuery = '''
     SELECT repairDescription FROM mechanics
@@ -54,3 +54,35 @@ String getWorksDescBySurnameQuery = '''
     INNER JOIN repairSpec
     ON mechanicSpec.repairId = repairSpec.repairId
     WHERE lastName = ?''';
+
+String deleteContractQuery = '''DELETE FROM contracts
+    WHERE stsNum = ? AND specId = ? ''';
+
+String getSpecIDBySTSAndWorkDescQuery = '''
+    SELECT contracts.specId FROM contracts
+    INNER JOIN mechanicSpec
+    ON contracts.specId = mechanicSpec.specId
+    INNER JOIN repairSpec
+    ON mechanicSpec.repairId = repairSpec.repairId
+    WHERE stsNum = ? AND repairDescription = ? ''';
+
+String editContractQuery = '''UPDATE contracts 
+       SET specId = ?, isPaidFor = ?, isCompleted = ? WHERE contractNum = ? ''';
+
+String newSpecIDForEditContractQuery = ''' 
+    SELECT specId FROM mechanicSpec
+    INNER JOIN mechanics
+    ON mechanicSpec.mechanicId = mechanics.mechanicId
+    INNER JOIN repairSpec
+    ON repairSpec.repairId = mechanicSpec.repairId
+    WHERE lastName = ? AND repairDescription = ? ''';
+
+String getContractNumBySTSAndSpecID =
+    ''' SELECT contractNum FROM contracts WHERE specId = ? AND stsNum = ? ''';
+
+String loadMechanicsAndWorksTableQuery = ''' 
+    SELECT firstName, lastName, repairDescription, coast FROM mechanicSpec
+    INNER JOIN repairSpec
+    ON mechanicSpec.repairId = repairSpec.repairId
+    INNER JOIN mechanics
+    ON mechanics.mechanicId = mechanicSpec.mechanicId ''';

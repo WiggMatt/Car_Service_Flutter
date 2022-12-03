@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:car_service/domain/models/data_collection.dart';
-import 'package:car_service/domain/repository/domain_repository.dart';
+import 'package:car_service/domain/repository/domain_repository_for_contracts.dart';
 import 'package:meta/meta.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -18,15 +17,14 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<EditContractEvent>(_editContractEvent);
     on<GetCurrentRowEvent>(_getCurrentRowEvent);
     on<SearchContractEvent>(_searchContractEvent);
-    on<SearchAlertEvent>(_changeSearchAlert);
+    //on<SearchAlertEvent>(_changeSearchAlert);
     on<LoadingContractsTableEvent>(_loadingContractsTable);
     on<FillAddEditAlertsEvent>(_fillAddEditAlerts);
-    on<LoadingClientsTableEvent>(_loadingClientsTable);
     on<SwitchSTSEvent>(_switchSTSEvent);
     on<SwitchSurnameEvent>(_switchSurnameEvent);
   }
 
-  final DomainRepository repository;
+  final DomainContractsRepository repository;
 
   _switchSurnameEvent(
       SwitchSurnameEvent event, Emitter<ContractState> emit) async {
@@ -42,29 +40,22 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
   _fillAddEditAlerts(
       FillAddEditAlertsEvent event, Emitter<ContractState> emit) {
     emit(FillAddEditAlertsInitState(
-        listOfSts: models.listOfSts,
-        listOfWorks: models.listOfWorks,
-        listOfWorkers: models.listOfWorkers,
-        listOfPayment: models.listOfPayment,
-        listOfReady: models.listOfReady));
+        listOfSts: loadedModels.listOfSts,
+        listOfWorks: loadedModels.listOfWorks,
+        listOfWorkers: loadedModels.listOfWorkers,
+        listOfPayment: loadedModels.listOfPayment,
+        listOfReady: loadedModels.listOfReady));
   }
 
   _loadingContractsTable(
       LoadingContractsTableEvent event, Emitter<ContractState> emit) async {
-    models = await repository.onStartLoadContractRows();
-    emit(ContractInitialState(contractsRows: models.loadedContractsList));
-  }
-
-  _loadingClientsTable(
-      LoadingClientsTableEvent event, Emitter<ContractState> emit) async {
-    models = await repository.onStartLoadClientsRows();
-    emit(ClientsInitialState(clientsRows: models.loadedClientsList));
+    loadedModels = await repository.onStartLoadContractRows();
+    emit(ContractInitialState(contractsRows: loadedModels.loadedContractsList));
   }
 
   _addContractEvent(AddContractEvent event, Emitter<ContractState> emit) async {
     await repository.onAddContract(event);
     add(LoadingContractsTableEvent());
-    emit(ContractInitialState(contractsRows: _contractsRows));
   }
 
   _changeSelectedContractEvent(
@@ -72,49 +63,52 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     _selectedContractRow = event.selectedRow!;
   }
 
-  _deleteContractEvent(DeleteContractEvent event, Emitter<ContractState> emit) {
-    _contractsRows.removeAt(_selectedContractRow);
-    emit(ContractInitialState(contractsRows: _contractsRows));
+  _deleteContractEvent(
+      DeleteContractEvent event, Emitter<ContractState> emit) async {
+    var contractRow = loadedModels
+        .loadedContractsList[_selectedContractRow].cells.values
+        .map((e) => e.value);
+    int stsNum = contractRow.elementAt(0);
+    String workDesc = contractRow.elementAt(3);
+    await repository.onDeleteContract(stsNum, workDesc);
+    add(LoadingContractsTableEvent());
   }
 
-  _editContractEvent(EditContractEvent event, Emitter<ContractState> emit) {
-    final item = PlutoRow(cells: {
-      'sts_field': PlutoCell(value: event.stsNum),
-      'brand_auto_field': PlutoCell(value: event.carBrand),
-      'model_auto_field': PlutoCell(value: event.carModel),
-      'work_field': PlutoCell(value: event.workID),
-      'worker_field': PlutoCell(value: event.workerID),
-    });
-    _contractsRows[_selectedContractRow] = item;
-    emit(ContractInitialState(contractsRows: _contractsRows));
+  _editContractEvent(
+      EditContractEvent event, Emitter<ContractState> emit) async {
+    await repository.onEditAlert(
+        event, loadedModels.loadedContractsList[_selectedContractRow]);
+    add(LoadingContractsTableEvent());
   }
 
   _getCurrentRowEvent(GetCurrentRowEvent event, Emitter<ContractState> emit) {
-    if (_selectedContractRow == -1 || _contractsRows.isEmpty) {
+    if (_selectedContractRow == -1 ||
+        loadedModels.loadedContractsList.isEmpty) {
       return;
     } else {
       emit(ContractCurrentRowInitialState(
-          row: _contractsRows[_selectedContractRow]));
+          row: loadedModels.loadedContractsList[_selectedContractRow]));
     }
   }
 
   _searchContractEvent(SearchContractEvent event, Emitter<ContractState> emit) {
     _searchedRows.clear();
-    if (_contractsRows.isEmpty) {
+
+    /*if (_contractsRows.isEmpty) {
       return;
     } else if (event.carBrand.isNotEmpty && event.carModel.isNotEmpty) {
       for (var item in _contractsRows) {
-        var contactRow = item.cells.values.map((e) => e.value);
-        if (contactRow.elementAt(1) == event.carBrand &&
-            contactRow.elementAt(2) == event.carModel) {
+        var contractRow = item.cells.values.map((e) => e.value);
+        if (contractRow.elementAt(1) == event.carBrand &&
+            contractRow.elementAt(2) == event.carModel) {
           _searchedRows.add(item);
         }
       }
       emit(SearchedTableInitialState(searchedRows: _searchedRows));
-    }
+    }*/
   }
 
-  _changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
+  /*_changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
     if (_contractsRows.isEmpty) {
       return;
     } else {
@@ -129,5 +123,5 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
         }
       }
     }
-  }
+  }*/
 }

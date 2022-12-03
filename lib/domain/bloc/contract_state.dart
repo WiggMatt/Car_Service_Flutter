@@ -3,21 +3,14 @@ part of 'contract_bloc.dart';
 @immutable
 abstract class ContractState {}
 
-List<PlutoRow> _contractsRows = [];
 int _selectedContractRow = -1;
 List<PlutoRow> _searchedRows = [];
-late LoadingData models;
+late LoadingData loadedModels;
 
 class ContractInitialState extends ContractState {
   final List<PlutoRow> contractsRows;
 
   ContractInitialState({required this.contractsRows});
-}
-
-class ClientsInitialState extends ContractState {
-  final List<PlutoRow> clientsRows;
-
-  ClientsInitialState({required this.clientsRows});
 }
 
 class SearchedTableInitialState extends ContractState {

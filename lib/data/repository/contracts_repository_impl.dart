@@ -1,11 +1,11 @@
 import 'package:car_service/data/repository/querys.dart';
 import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:car_service/domain/models/data_collection.dart';
-import 'package:car_service/domain/repository/domain_repository.dart';
+import 'package:car_service/domain/repository/domain_repository_for_contracts.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class TablesRepositoryImplementation implements DomainRepository {
+class ContractsRepositoryImplementation implements DomainContractsRepository {
   final String _appSupportDirectory =
       r'D:\Programming\Android Projects\car_service\assets\database';
 
@@ -13,7 +13,7 @@ class TablesRepositoryImplementation implements DomainRepository {
   late var _dataBase;
   final databaseFactory = databaseFactoryFfi;
 
-  TablesRepositoryImplementation() {
+  ContractsRepositoryImplementation() {
     sqfliteFfiInit();
     path = "$_appSupportDirectory\\database.db";
   }
@@ -80,28 +80,6 @@ class TablesRepositoryImplementation implements DomainRepository {
   }
 
   @override
-  Future<LoadingData> onStartLoadClientsRows() async {
-    LoadingData loadingData = LoadingData();
-    _dataBase = await databaseFactory.openDatabase(path);
-    final List<Map<String, dynamic>> maps =
-        await _dataBase.rawQuery(loadClientsTableQuery);
-
-    for (var item in maps) {
-      PlutoRow row = PlutoRow(cells: {
-        'brand_field': PlutoCell(value: item['carBrand']),
-        'model_field': PlutoCell(value: item['carModel']),
-        'sts_field': PlutoCell(value: item['stsNum']),
-        'name_field': PlutoCell(value: item['firstName']),
-        'surname_field': PlutoCell(value: item['lastName']),
-        'telephone_field': PlutoCell(value: item['telephoneNum']),
-      });
-      loadingData.loadedClientsList.add(row);
-    }
-    await _dataBase.close();
-    return loadingData;
-  }
-
-  @override
   Future<void> onAddContract(AddContractEvent event) async {
     _dataBase = await databaseFactory.openDatabase(path);
     await _dataBase.rawInsert(addContractQuery, [
@@ -137,6 +115,43 @@ class TablesRepositoryImplementation implements DomainRepository {
       list.add(item['repairDescription']);
     }
     return list;
+    await _dataBase.close();
+  }
+
+  @override
+  Future<void> onDeleteContract(int stsNum, String workDesc) async {
+    _dataBase = await databaseFactory.openDatabase(path);
+    final List<Map<String, dynamic>> maps = await _dataBase
+        .rawQuery(getSpecIDBySTSAndWorkDescQuery, [stsNum, workDesc]);
+    int specId = maps.first['specId'];
+    await _dataBase.rawDelete(deleteContractQuery, [stsNum, specId]);
+    await _dataBase.close();
+  }
+
+  @override
+  Future<void> onEditAlert(
+      EditContractEvent event, PlutoRow oldValuesList) async {
+    var oldValues =
+        oldValuesList.cells.values.map((e) => e.value.toString()).toList();
+
+    _dataBase = await databaseFactory.openDatabase(path);
+
+    List<Map> oldSpecID = await _dataBase.rawQuery(
+        getSpecIDBySTSAndWorkDescQuery,
+        [int.parse(event.stsNum), oldValues[3]]);
+
+    var newSpecID = await _dataBase.rawQuery(
+        newSpecIDForEditContractQuery, [event.workerName, event.workDesc]);
+
+    var contractNum = await _dataBase.rawQuery(getContractNumBySTSAndSpecID,
+        [oldSpecID[0]["specId"], int.parse(event.stsNum)]);
+
+    await _dataBase.rawUpdate(editContractQuery, [
+      newSpecID[0]["specId"],
+      event.payment == "Оплачено" ? 1 : 0,
+      event.readiness == "Выполнено" ? 1 : 0,
+      contractNum[0]["contractNum"]
+    ]);
     await _dataBase.close();
   }
 }
