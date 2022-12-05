@@ -76,7 +76,7 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
 
   _editContractEvent(
       EditContractEvent event, Emitter<ContractState> emit) async {
-    await repository.onEditAlert(
+    await repository.onEditContractAlert(
         event, loadedModels.loadedContractsList[_selectedContractRow]);
     add(LoadingContractsTableEvent());
   }
@@ -94,10 +94,10 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
   _searchContractEvent(SearchContractEvent event, Emitter<ContractState> emit) {
     _searchedRows.clear();
 
-    /*if (_contractsRows.isEmpty) {
+    if (loadedModels.loadedContractsList.isEmpty) {
       return;
     } else if (event.carBrand.isNotEmpty && event.carModel.isNotEmpty) {
-      for (var item in _contractsRows) {
+      for (var item in loadedModels.loadedContractsList) {
         var contractRow = item.cells.values.map((e) => e.value);
         if (contractRow.elementAt(1) == event.carBrand &&
             contractRow.elementAt(2) == event.carModel) {
@@ -105,14 +105,14 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
         }
       }
       emit(SearchedTableInitialState(searchedRows: _searchedRows));
-    }*/
+    }
   }
 
-  /*_changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
-    if (_contractsRows.isEmpty) {
+/*  _changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
+    if (loadedModels.loadedContractsList.isEmpty) {
       return;
     } else {
-      for (var item in _contractsRows) {
+      for (var item in loadedModels.loadedContractsList) {
         var contactRow = item.cells.values.map((e) => e.value);
         if (contactRow.elementAt(0).toString() == event.stsNum) {
           var currentModel = contactRow.elementAt(2);

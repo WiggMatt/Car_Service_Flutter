@@ -66,6 +66,10 @@ class _MechanicsAndWorksTableState extends State<MechanicsAndWorksTable> {
           ),
           columns: mAwColumns,
           rows: [],
+          onSelected: (PlutoGridOnSelectedEvent event) {
+            widget.mechanicsAndWorksBloc
+                .add(ChangedSelectedMechanicEvent(selectedRow: event.rowIdx));
+          },
           onLoaded: (event) => stateManager = event.stateManager,
         );
       },

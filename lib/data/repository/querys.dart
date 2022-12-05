@@ -86,3 +86,60 @@ String loadMechanicsAndWorksTableQuery = '''
     ON mechanicSpec.repairId = repairSpec.repairId
     INNER JOIN mechanics
     ON mechanics.mechanicId = mechanicSpec.mechanicId ''';
+
+String addClientQuery = ''' 
+    INSERT INTO clients (firstName, lastName, telephoneNum)
+    VALUES (?, ?, ?) ''';
+
+String addCarsQuery = ''' 
+    INSERT INTO cars
+    VALUES (? ,? ,? ,?) ''';
+
+String deleteClientQuery = ''' 
+    DELETE FROM clients
+    WHERE clientID = ? ''';
+
+String deleteCarQuery = ''' 
+    DELETE FROM cars
+    WHERE ownerId = ? AND stsNum = ?''';
+
+String getClientIDByNameQuery = ''' 
+    SELECT clientID FROM clients
+    WHERE firstName = ? AND lastName = ? ''';
+
+String getClientStsNumQuery = ''' 
+    SELECT ownerId FROM cars
+    WHERE stsNum = ? ''';
+
+String getOwnerIDQuery = ''' 
+    SELECT ownerId FROM cars
+    WHERE ownerId = ? ''';
+
+///-----------------------------------------------------------------------------
+String addMechanicsQuery = ''' 
+    INSERT INTO mechanics (firstName, lastName)
+    VALUES (?, ?) ''';
+
+String addMechanicSpecQuery = ''' 
+    INSERT INTO mechanicSpec (mechanicId, repairId)
+    VALUES (?, ?)''';
+
+String getMechanicIDQuery = ''' 
+    SELECT mechanicId FROM mechanics
+    WHERE firstName = ? AND lastName = ? ''';
+
+String getRepairIDQuery = ''' 
+    SELECT repairId FROM repairSpec
+    WHERE repairDescription = ?  ''';
+
+String deleteMechanicQuery = ''' 
+    DELETE FROM mechanics
+    WHERE mechanicId = ? ''';
+
+String deleteMechanicSpecQuery = ''' 
+    DELETE FROM mechanicSpec
+    WHERE mechanicId = ? AND repairId = ?''';
+
+String getSpecIDByMechanicID = ''' 
+    SELECT specId FROM mechanicSpec
+    WHERE mechanicId = ? ''';

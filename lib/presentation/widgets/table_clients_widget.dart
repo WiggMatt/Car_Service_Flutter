@@ -78,6 +78,10 @@ class _ClientsTableState extends State<ClientsTable> {
           ),
           columns: clientsColumns,
           rows: [],
+          onSelected: (PlutoGridOnSelectedEvent event) {
+            widget.clientBloc
+                .add(ChangedSelectedClientEvent(selectedRow: event.rowIdx));
+          },
           onLoaded: (event) => stateManager = event.stateManager,
         );
       },

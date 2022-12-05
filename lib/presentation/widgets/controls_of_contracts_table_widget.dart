@@ -3,7 +3,6 @@ import 'package:car_service/presentation/const/button_styles.dart';
 import 'package:car_service/presentation/pages/alert_dialog/add_contract_alert.dart';
 import 'package:car_service/presentation/pages/alert_dialog/edit_contract_alert.dart';
 import 'package:car_service/presentation/pages/alert_dialog/search_contract_alert.dart';
-import 'package:car_service/presentation/pages/clients_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,7 +29,7 @@ class _ControlsOfContractsTableState extends State<ControlsOfContractsTable> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 40),
+              padding: const EdgeInsets.only(bottom: 40, left: 30),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

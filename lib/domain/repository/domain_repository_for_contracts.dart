@@ -19,7 +19,7 @@ abstract class DomainContractsRepository {
     throw Exception();
   }
 
-  Future<void> onEditAlert(
+  Future<void> onEditContractAlert(
       EditContractEvent event, PlutoRow oldValuesList) async {
     throw Exception();
   }

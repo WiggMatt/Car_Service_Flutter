@@ -41,8 +41,10 @@ class _AddContractAlertState extends State<AddContractAlert> {
   @override
   Widget build(BuildContext context) {
     widget.contractBloc.add(FillAddEditAlertsEvent());
+    if (dropdownWORKERValue != "") {
+      widget.contractBloc.add(SwitchSurnameEvent(surname: dropdownWORKERValue));
+    }
     widget.contractBloc.add(SwitchSTSEvent(stsNum: dropdownSTSValue));
-    widget.contractBloc.add(SwitchSurnameEvent(surname: dropdownWORKERValue));
 
     return BlocListener<ContractBloc, ContractState>(
       listener: (context, state) {

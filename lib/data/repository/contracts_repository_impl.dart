@@ -129,7 +129,7 @@ class ContractsRepositoryImplementation implements DomainContractsRepository {
   }
 
   @override
-  Future<void> onEditAlert(
+  Future<void> onEditContractAlert(
       EditContractEvent event, PlutoRow oldValuesList) async {
     var oldValues =
         oldValuesList.cells.values.map((e) => e.value.toString()).toList();
