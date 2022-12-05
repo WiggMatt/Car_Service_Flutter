@@ -93,16 +93,16 @@ class ContractsRepositoryImplementation implements DomainContractsRepository {
 
   @override
   Future<List<String>> onSwitchSTS(SwitchSTSEvent event) async {
-    _dataBase = await databaseFactory.openDatabase(path);
     List<String> list = [];
+    _dataBase = await databaseFactory.openDatabase(path);
     final List<Map<String, dynamic>> modelsAndBrandsMap = await _dataBase
         .rawQuery(getBrandAndModelOfCarQuery, [int.parse(event.stsNum)]);
     for (var item in modelsAndBrandsMap) {
       list.add(item['carBrand']);
       list.add(item['carModel']);
     }
-    return list;
     await _dataBase.close();
+    return list;
   }
 
   @override
@@ -114,8 +114,8 @@ class ContractsRepositoryImplementation implements DomainContractsRepository {
     for (var item in modelsAndBrandsMap) {
       list.add(item['repairDescription']);
     }
-    return list;
     await _dataBase.close();
+    return list;
   }
 
   @override

@@ -40,8 +40,8 @@ class _ControlsOfContractsTableState extends State<ControlsOfContractsTable> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              bloc.add(FillAddEditAlertsEvent());
-                              return AddContractAlert(contractBloc: bloc);
+                              return AddContractAlert(contractBloc: bloc)
+                                ..contractBloc.add(FillAddEditAlertsEvent());
                             });
                       },
                       child: const Text('Добавить запись')),
@@ -52,9 +52,8 @@ class _ControlsOfContractsTableState extends State<ControlsOfContractsTable> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              bloc.add(GetCurrentRowEvent());
-
-                              return EditContractAlert(contractBloc: bloc);
+                              return EditContractAlert(contractBloc: bloc)
+                                ..contractBloc.add(GetCurrentRowEvent());
                             });
                       },
                       child: const Text('Изменить данные')),
