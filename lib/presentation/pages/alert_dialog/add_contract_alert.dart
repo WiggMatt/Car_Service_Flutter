@@ -14,62 +14,37 @@ class AddContractAlert extends StatefulWidget {
 }
 
 class _AddContractAlertState extends State<AddContractAlert> {
-  List<String> listOfWorks = [''];
-  List<String> listOfWorkers = [''];
-  List<String> listOfPayment = [''];
-  List<String> listOfSTS = [''];
+  String dropdownWORKValue = loadedModels.listOfWorks.first;
+  String dropdownWORKERValue = loadedModels.listOfWorkers.first;
+  String dropdownSTSValue = loadedModels.listOfSts.first;
+  String dropdownPaymentValue = loadedModels.listOfPayment.first;
 
-  @override
-  void initState() {
-    super.initState();
-    dropdownWORKValue = listOfWorks.first;
-    dropdownWORKERValue = listOfWorkers.first;
-    dropdownSTSValue = listOfSTS.first;
-    dropdownPaymentValue = listOfPayment.first;
-  }
-
-  late String dropdownWORKValue;
-  late String dropdownWORKERValue;
-  late String dropdownSTSValue;
-  late String dropdownPaymentValue;
-  int counter = 0;
-  int counter2 = 0;
+  List<String> listOfWorks = [];
 
   TextEditingController carBrand = TextEditingController();
   TextEditingController carModel = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    widget.contractBloc.add(FillAddEditAlertsEvent());
-    if (dropdownWORKERValue != "") {
-      widget.contractBloc.add(SwitchSurnameEvent(surname: dropdownWORKERValue));
-    }
-    widget.contractBloc.add(SwitchSTSEvent(stsNum: dropdownSTSValue));
-
     return BlocListener<ContractBloc, ContractState>(
       listener: (context, state) {
-        if (state is FillAddEditAlertsInitState && counter == 0) {
+        if (state is FillAddEditAlertsInitState) {
           setState(() {
+            dropdownWORKValue = state.listOfWorks.first;
+            dropdownWORKERValue = state.listOfWorkers.first;
+            dropdownSTSValue = state.listOfSts.first;
+            dropdownPaymentValue = state.listOfPayment.first;
             listOfWorks = state.listOfWorks;
-            listOfWorkers = state.listOfWorkers;
-            listOfSTS = state.listOfSts;
-            listOfPayment = state.listOfPayment;
-            dropdownWORKValue = listOfWorks.first;
-            dropdownWORKERValue = listOfWorkers.first;
-            dropdownSTSValue = listOfSTS.first;
-            dropdownPaymentValue = listOfPayment.first;
-            counter++;
           });
         }
         if (state is CurrentModelAndBrandInitState) {
           carBrand.text = state.brand;
           carModel.text = state.model;
         }
-        if (state is WorksForCurrentWorkerState && counter2 == 0) {
+        if (state is WorksForCurrentWorkerState) {
           setState(() {
             listOfWorks = state.listOfWorks;
             dropdownWORKValue = listOfWorks.first;
-            counter2++;
           });
         }
       },
@@ -102,8 +77,8 @@ class _AddContractAlertState extends State<AddContractAlert> {
                   isExpanded: true,
                   value: dropdownSTSValue,
                   alignment: Alignment.center,
-                  items:
-                      listOfSTS.map<DropdownMenuItem<String>>((String value) {
+                  items: loadedModels.listOfSts
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -113,6 +88,8 @@ class _AddContractAlertState extends State<AddContractAlert> {
                     setState(() {
                       dropdownSTSValue = value!;
                     });
+                    widget.contractBloc
+                        .add(SwitchSTSEvent(stsNum: dropdownSTSValue));
                   },
                 ),
               ),
@@ -176,7 +153,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
                   isExpanded: true,
                   value: dropdownWORKERValue,
                   alignment: Alignment.center,
-                  items: listOfWorkers
+                  items: loadedModels.listOfWorkers
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -186,8 +163,9 @@ class _AddContractAlertState extends State<AddContractAlert> {
                   onChanged: (value) {
                     setState(() {
                       dropdownWORKERValue = value!;
-                      counter2 = 0;
                     });
+                    widget.contractBloc
+                        .add(SwitchSurnameEvent(surname: dropdownWORKERValue));
                   },
                 ),
               ),
@@ -216,8 +194,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
                   isExpanded: true,
                   value: dropdownWORKValue,
                   alignment: Alignment.center,
-                  items:
-                      listOfWorks.map<DropdownMenuItem<String>>((String value) {
+                  items: listOfWorks.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -255,7 +232,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
                   isExpanded: true,
                   value: dropdownPaymentValue,
                   alignment: Alignment.center,
-                  items: listOfPayment
+                  items: loadedModels.listOfPayment
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,

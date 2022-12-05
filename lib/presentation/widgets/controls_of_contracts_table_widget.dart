@@ -41,7 +41,11 @@ class _ControlsOfContractsTableState extends State<ControlsOfContractsTable> {
                             context: context,
                             builder: (context) {
                               return AddContractAlert(contractBloc: bloc)
-                                ..contractBloc.add(FillAddEditAlertsEvent());
+                                ..contractBloc.add(FillAddEditAlertsEvent())
+                                ..contractBloc.add(SwitchSTSEvent(
+                                    stsNum: loadedModels.listOfSts.first))
+                                ..contractBloc.add(SwitchSurnameEvent(
+                                    surname: loadedModels.listOfWorkers.first));
                             });
                       },
                       child: const Text('Добавить запись')),
