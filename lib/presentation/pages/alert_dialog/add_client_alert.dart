@@ -50,7 +50,7 @@ class _AddClientAlertState extends State<AddClientAlert> {
               maxLength: 10,
               controller: carModel,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z]"))
+                FilteringTextInputFormatter.allow(RegExp(r"[A-Z-a-z-0-9]"))
               ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),

@@ -5,7 +5,9 @@ import 'package:car_service/data/repository/mechanics_and_works_repository_impl.
 import 'package:car_service/domain/bloc/bloc_for_clients/client_bloc.dart';
 import 'package:car_service/domain/bloc/bloc_for_mechanics_and_works/mechanics_and_works_bloc.dart';
 import 'package:car_service/domain/bloc/contract_bloc.dart';
+import 'package:car_service/presentation/pages/clients_page.dart';
 import 'package:car_service/presentation/pages/home_page.dart';
+import 'package:car_service/presentation/pages/mechanics_and_works_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:window_size/window_size.dart';
@@ -27,10 +29,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MainScreen(),
+        '/clients': (context) => const ScreenForClients(),
+        '/mechanics': (context) => const ScreenForMechanicsAndWorks(),
+      },
     );
   }
 }

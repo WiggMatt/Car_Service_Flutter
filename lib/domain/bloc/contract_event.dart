@@ -54,8 +54,6 @@ class SearchContractEvent extends ContractEvent {
   final String stsNum;
   final String carBrand;
   final String carModel;
-  final String workerName;
-  final String workDesc;
   final String payment;
   final String readiness;
 
@@ -63,8 +61,6 @@ class SearchContractEvent extends ContractEvent {
     required this.stsNum,
     required this.carBrand,
     required this.carModel,
-    required this.workerName,
-    required this.workDesc,
     required this.payment,
     required this.readiness,
   });

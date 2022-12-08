@@ -252,7 +252,7 @@ class _AddContractAlertState extends State<AddContractAlert> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context, []);
+              Navigator.pop(context);
               widget.contractBloc.add(AddContractEvent(
                   stsNum: dropdownSTSValue,
                   carBrand: carBrand.text,

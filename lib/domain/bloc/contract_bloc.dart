@@ -17,7 +17,6 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
     on<EditContractEvent>(_editContractEvent);
     on<GetCurrentRowEvent>(_getCurrentRowEvent);
     on<SearchContractEvent>(_searchContractEvent);
-    //on<SearchAlertEvent>(_changeSearchAlert);
     on<LoadingContractsTableEvent>(_loadingContractsTable);
     on<FillAddEditAlertsEvent>(_fillAddEditAlerts);
     on<SwitchSTSEvent>(_switchSTSEvent);
@@ -93,35 +92,33 @@ class ContractBloc extends Bloc<ContractEvent, ContractState> {
 
   _searchContractEvent(SearchContractEvent event, Emitter<ContractState> emit) {
     _searchedRows.clear();
-
     if (loadedModels.loadedContractsList.isEmpty) {
       return;
-    } else if (event.carBrand.isNotEmpty && event.carModel.isNotEmpty) {
+    } else {
       for (var item in loadedModels.loadedContractsList) {
         var contractRow = item.cells.values.map((e) => e.value);
-        if (contractRow.elementAt(1) == event.carBrand &&
+        if (contractRow.elementAt(0) == event.stsNum &&
+            contractRow.elementAt(1) == event.carBrand &&
             contractRow.elementAt(2) == event.carModel) {
+          _searchedRows.add(item);
+        } else if (contractRow.elementAt(0) != "" &&
+            contractRow.elementAt(0) == event.stsNum) {
+          _searchedRows.add(item);
+        } else if (contractRow.elementAt(1) == event.carBrand &&
+            contractRow.elementAt(2) == event.carModel) {
+          _searchedRows.add(item);
+        } else if (contractRow.elementAt(6) == event.readiness &&
+            contractRow.elementAt(7) == event.payment) {
+          _searchedRows.add(item);
+        } else if (contractRow.elementAt(6) == event.readiness &&
+            event.payment == "") {
+          _searchedRows.add(item);
+        } else if (contractRow.elementAt(7) == event.payment &&
+            event.readiness == "") {
           _searchedRows.add(item);
         }
       }
       emit(SearchedTableInitialState(searchedRows: _searchedRows));
     }
   }
-
-/*  _changeSearchAlert(SearchAlertEvent event, Emitter<ContractState> emit) {
-    if (loadedModels.loadedContractsList.isEmpty) {
-      return;
-    } else {
-      for (var item in loadedModels.loadedContractsList) {
-        var contactRow = item.cells.values.map((e) => e.value);
-        if (contactRow.elementAt(0).toString() == event.stsNum) {
-          var currentModel = contactRow.elementAt(2);
-          var currentBrand = contactRow.elementAt(1);
-          emit(CurrentModelAndBrandInitState(
-              model: currentModel, brand: currentBrand));
-          break;
-        }
-      }
-    }
-  }*/
 }

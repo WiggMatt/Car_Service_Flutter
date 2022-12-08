@@ -16,16 +16,9 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       drawer: const MainDrawer(),
       appBar: AppBar(
-        actions: [
-          IconButton(
-            color: Colors.red,
-            onPressed: () {},
-            icon: const Icon(Icons.add_chart),
-          )
-        ],
         backgroundColor: Colors.blue,
         centerTitle: true,
-        title: const Text('WAGNER'),
+        title: const Text('Договоры'),
       ),
       body: Column(
         children: const [

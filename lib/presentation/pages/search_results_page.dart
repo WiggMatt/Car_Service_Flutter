@@ -6,7 +6,7 @@ List<PlutoColumn> columns = [
   PlutoColumn(
     title: 'Номер СТС',
     field: 'sts_field',
-    type: PlutoColumnType.number(),
+    type: PlutoColumnType.text(),
   ),
 
   /// Text Column definition
@@ -25,16 +25,37 @@ List<PlutoColumn> columns = [
 
   /// Text Column definition
   PlutoColumn(
-    title: 'Код работы',
+    title: 'Наименование работы',
     field: 'work_field',
     type: PlutoColumnType.text(),
   ),
 
   /// Text Column definition
   PlutoColumn(
-    title: 'ID работника',
+    title: 'Фамилия работника',
     field: 'worker_field',
+    type: PlutoColumnType.text(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Стоимость работы',
+    field: 'coast_field',
     type: PlutoColumnType.number(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Готовность',
+    field: 'ready_field',
+    type: PlutoColumnType.text(),
+  ),
+
+  /// Text Column definition
+  PlutoColumn(
+    title: 'Оплата',
+    field: 'payment_field',
+    type: PlutoColumnType.text(),
   ),
 ];
 
@@ -51,8 +72,6 @@ class SearchedContractsTableScreen extends StatefulWidget {
 
 class _SearchedContractsTableScreenState
     extends State<SearchedContractsTableScreen> {
-  late final PlutoGridStateManager stateManager;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,12 +86,7 @@ class _SearchedContractsTableScreenState
                 autoSizeMode: PlutoAutoSizeMode.equal),
           ),
           columns: columns,
-          rows: [],
-          onLoaded: (event) => {
-            stateManager = event.stateManager,
-            stateManager.removeAllRows(),
-            stateManager.appendRows(widget.rows)
-          },
+          rows: widget.rows,
         ));
   }
 }

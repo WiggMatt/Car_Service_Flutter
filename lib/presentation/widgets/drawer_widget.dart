@@ -13,7 +13,6 @@ class MainDrawer extends StatefulWidget {
 class _MainDrawerState extends State<MainDrawer> {
   @override
   Widget build(BuildContext context) {
-    //final bloc = BlocProvider.of<ClientBloc>(context);
     return Drawer(
         child: Column(
       children: [
@@ -34,10 +33,7 @@ class _MainDrawerState extends State<MainDrawer> {
           title: ElevatedButton(
               style: buttonStyle,
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScreenForClients()));
+                Navigator.pushNamed(context, '/clients');
               },
               child: const Text('Таблица с клиентами')),
         ),
@@ -45,10 +41,7 @@ class _MainDrawerState extends State<MainDrawer> {
           title: ElevatedButton(
               style: buttonStyle,
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScreenForMechanicsAndWorks()));
+                Navigator.pushNamed(context, '/mechanics');
               },
               child: const Text('Таблица с механиками')),
         ),

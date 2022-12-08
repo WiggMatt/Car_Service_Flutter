@@ -1,4 +1,5 @@
 import 'package:car_service/domain/bloc/bloc_for_clients/client_bloc.dart';
+import 'package:car_service/domain/bloc/contract_bloc.dart';
 import 'package:car_service/presentation/widgets/controls_of_clients_table_widget.dart';
 import 'package:car_service/presentation/widgets/table_clients_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,16 @@ class _ScreenForClientsState extends State<ScreenForClients> {
     final bloc = BlocProvider.of<ClientBloc>(context);
     return Scaffold(
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.arrow_back_outlined),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+          ),
           centerTitle: true,
           title: const Text('Клиенты'),
         ),
