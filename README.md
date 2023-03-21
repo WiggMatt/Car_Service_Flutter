@@ -2,6 +2,8 @@
 
 Моя курсовая работа. 
 
+Реализована работа с базой данных при момощи SQLite, а также приложение основано на архитектуре BLoC.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
