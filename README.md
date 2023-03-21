@@ -1,6 +1,6 @@
 # car_service
 
-My course work.
+Моя курсовая работа. 
 
 ## Getting Started
 
